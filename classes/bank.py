@@ -1,4 +1,6 @@
 from classes.customer import Customer
+import csv
+import os
 class Bank:
     def __init__(self):
         self.customers = {}
