@@ -41,3 +41,25 @@ class Bank:
         self.customers[account_id] = customer
         return customer
 
+    # save customers to csv file
+    def save_customers_to_csv(self, filename="bank.csv"):
+        fieldnames = ["account_id", "frst_name", "last_name",
+                    "password", "balance_checking", "balance_savings"]
+        
+        write_header = not os.path.exists(filename)
+
+        with open(filename, mode="a", newline="", encoding="utf-8") as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+
+            if write_header:
+                writer.writeheader()
+
+            for customer in self.customers.values():
+                writer.writerow({
+                    "account_id": customer.account_id,
+                    "frst_name": customer.frst_name,
+                    "last_name": customer.last_name,
+                    "password": customer.password,
+                    "balance_checking": customer.balance_checking,
+                    "balance_savings": customer.balance_savings
+                })

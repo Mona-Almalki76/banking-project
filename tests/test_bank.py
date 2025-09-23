@@ -1,12 +1,13 @@
 import unittest
 from classes.bank import Bank
 import csv
+import os
 
 class TestBank(unittest.TestCase):
     def setUp(self):
         self.bank = Bank()
         self.test_file = "test_bank.csv"
-
+        
     def test_add_customer_auto_id(self):
         c1 = self.bank.add_customer("Mona", "Almalki", "pass123")
         self.assertEqual(c1.account_id, "10001")
@@ -35,6 +36,8 @@ class TestBank(unittest.TestCase):
         self.assertEqual(c4.balance_savings, 0.0)
 
     def test_save_customers_to_csv(self):
+        if os.path.exists(self.test_file):
+            os.remove(self.test_file)
         c1 = self.bank.add_customer("Mona", "Almalki", "pass123")
         self.bank.save_customers_to_csv(self.test_file)
 
