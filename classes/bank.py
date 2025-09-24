@@ -40,6 +40,20 @@ class Bank:
         customer = Customer(account_id, frst_name, last_name, password, balance_checking, balance_savings)
         self.customers[account_id] = customer
         return customer
+    
+    # login
+    def login(self, account_id, password):
+        customer = self.customers.get(account_id)
+        if not customer:
+            raise ValueError("Account not found")
+        if customer.password != password:
+            raise PermissionError("Invalid password")
+        self.logged_in_customer = customer
+        return True
+
+    # logout
+    def logout(self):
+        self.logged_in_customer = None
 
     # save customers to csv file
     def save_customers_to_csv(self, filename="bank.csv"):
