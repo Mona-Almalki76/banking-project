@@ -1,9 +1,13 @@
 from classes.customer import Customer
 import csv
 import os
+from classes.transaction import Transaction
+
 class Bank:
     def __init__(self):
         self.customers = {}
+        self.logged_in_customer = None
+        self.transactions = []
 
     # generate account id automatically
     def auto_id_generated(self):
@@ -77,3 +81,36 @@ class Bank:
                     "balance_checking": customer.balance_checking,
                     "balance_savings": customer.balance_savings
                 })
+    
+    # withdraw money from Account
+    def withdraw(self, amount, account_type="checking"):
+        if not self.logged_in_customer:
+            raise PermissionError("Login required to perform withdrawal")
+
+        try:
+            if account_type == "checking":
+                self.logged_in_customer.withdraw_checking(amount)
+            elif account_type == "savings":
+                self.logged_in_customer.withdraw_savings(amount)
+            else:
+                raise ValueError("Invalid account type")
+
+            transaction = Transaction(
+                self.logged_in_customer.account_id,
+                "withdraw",
+                amount,
+                account_type
+            )
+            self.transactions.append(transaction)
+            return transaction
+
+        except ValueError as e:
+            transaction = Transaction(
+                self.logged_in_customer.account_id,
+                "withdraw",
+                amount,
+                account_type,
+                status="FAILED"
+            )
+            self.transactions.append(transaction)
+            raise e
