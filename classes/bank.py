@@ -114,3 +114,36 @@ class Bank:
             )
             self.transactions.append(transaction)
             raise e
+    
+    # deposit money into Account
+    def deposit(self, amount, account_type="checking"):
+        if not self.logged_in_customer:
+            raise PermissionError("Login required to perform deposit")
+
+        try:
+            if account_type == "checking":
+                self.logged_in_customer.deposit_checking(amount)
+            elif account_type == "savings":
+                self.logged_in_customer.deposit_savings(amount)
+            else:
+                raise ValueError("Invalid account type")
+
+            transaction = Transaction(
+                self.logged_in_customer.account_id,
+                "deposit",
+                amount,
+                account_type
+            )
+            self.transactions.append(transaction)
+            return transaction
+
+        except ValueError as e:
+            transaction = Transaction(
+                self.logged_in_customer.account_id,
+                "deposit",
+                amount,
+                account_type,
+                status="FAILED"
+            )
+            self.transactions.append(transaction)
+            raise e
