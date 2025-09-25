@@ -22,3 +22,17 @@ class Customer:
             raise ValueError("Insufficient funds in savings")
         self.balance_savings -= amount
         return self.balance_savings
+    
+    def deposit_checking(self, amount):
+        if self.balance_checking is None:
+            raise ValueError("No checking account available")
+        if amount <= 0:
+            raise ValueError("Deposit amount must be positive")
+        self.balance_checking += amount
+
+    def deposit_savings(self, amount):
+        if self.balance_savings is None:
+            raise ValueError("No savings account available")
+        if amount <= 0:
+            raise ValueError("Deposit amount must be positive")
+        self.balance_savings += amount
