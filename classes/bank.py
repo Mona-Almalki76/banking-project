@@ -149,12 +149,18 @@ class Bank:
             raise e
 
     # transfer money between accounts of the same customer
-    def transfer(self, amount, from_account, to_account):
+    def transfer(self, amount, from_account, to_account, recipient_account_id=None):
         if not self.logged_in_customer:
             raise PermissionError("Login required to perform transfer")
 
         sender_customer = self.logged_in_customer
-        recipient_customer = sender_customer 
+        recipient_customer = sender_customer
+
+        if recipient_account_id:
+            # transfer to another customer
+            recipient_customer = self.customers.get(recipient_account_id)
+            if not recipient_customer:
+                raise ValueError("Recipient account not found") 
 
         try:
             # withdraw from sender
