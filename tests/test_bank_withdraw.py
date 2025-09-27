@@ -33,5 +33,9 @@ class TestWithdraw(unittest.TestCase):
         self.assertEqual(transaction.amount, 550)
         self.assertEqual(transaction.status, "SUCCESS")
 
+    def test_withdraw_checking_overdraft_limit_exceeded(self):
+        with self.assertRaises(ValueError):
+            self.bank.withdraw(700, account_type="checking")
+
 if __name__ == "__main__":
     unittest.main()
