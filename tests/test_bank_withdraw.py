@@ -37,5 +37,11 @@ class TestWithdraw(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.bank.withdraw(700, account_type="checking")
 
+    def test_withdraw_savings_overdraft_success(self):
+        transaction = self.bank.withdraw(550, account_type="savings")
+        self.assertEqual(self.c1.balance_savings, -85)
+        self.assertEqual(transaction.amount, 1050)
+        self.assertEqual(transaction.status, "SUCCESS")
+
 if __name__ == "__main__":
     unittest.main()
