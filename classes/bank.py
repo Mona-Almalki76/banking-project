@@ -147,3 +147,51 @@ class Bank:
             )
             self.transactions.append(transaction)
             raise e
+
+    # transfer money between accounts of the same customer
+    def transfer(self, amount, from_account, to_account):
+        if not self.logged_in_customer:
+            raise PermissionError("Login required to perform transfer")
+
+        sender_customer = self.logged_in_customer
+        recipient_customer = sender_customer 
+
+        try:
+            # withdraw from sender
+            if from_account == "checking":
+                sender_customer.withdraw_checking(amount)
+            elif from_account == "savings":
+                sender_customer.withdraw_savings(amount)
+            else:
+                raise ValueError("Invalid sender account type")
+
+            # deposit to recipient
+            if to_account == "checking":
+                recipient_customer.deposit_checking(amount)
+            elif to_account == "savings":
+                recipient_customer.deposit_savings(amount)
+            else:
+                raise ValueError("Invalid recipient account type")
+
+            transaction = Transaction(
+                sender_customer.account_id,
+                "transfer",
+                amount,
+                f"{from_account}->{to_account}",
+                status="SUCCESS"
+            )
+            self.transactions.append(transaction)
+            return transaction
+
+        except ValueError as e:
+            transaction = Transaction(
+                sender_customer.account_id,
+                "transfer",
+                amount,
+                f"{from_account}->{to_account}",
+                status="FAILED"
+            )
+            self.transactions.append(transaction)
+            raise e
+
+
