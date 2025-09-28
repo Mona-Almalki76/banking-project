@@ -36,10 +36,28 @@ class Customer:
         return self.balance_checking
 
     def withdraw_savings(self, amount):
+        if not self.is_active:
+            raise ValueError("Account is deactivated due to overdrafts")
+        
         if self.balance_savings is None:
             raise ValueError("No savings account")
+        
+        # overdraft handling
         if amount > self.balance_savings:
-            raise ValueError("Insufficient funds in savings")
+            overdraft_fee = 35
+            new_balance = self.balance_savings - amount - overdraft_fee
+
+            if new_balance < -100:
+                raise ValueError("Overdraft limit exceeded (-100 USD max)")
+
+            self.balance_checking = new_balance
+            self.overdraft_count += 1
+
+            if self.overdraft_count >= 2:
+                self.is_active = False
+
+            return self.balance_checking
+
         self.balance_savings -= amount
         return self.balance_savings
     
