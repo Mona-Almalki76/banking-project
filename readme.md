@@ -39,7 +39,7 @@ def withdraw_checking(self, amount):
 
     self.balance_checking -= amount
     return self.balance_checking 
----
+```
 I’m proud of this part because it combines validation, business rules, and customer protection in one function.
 ---
 ## What I Learned  
