@@ -1,0 +1,2 @@
+account_id,transaction_type,amount,account_type,status,timestamp
+10007,transfer,2000.0,checking->savings,SUCCESS,2025-09-28 06:33:05.025311
