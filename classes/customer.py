@@ -6,12 +6,32 @@ class Customer:
         self.password=password
         self.balance_checking=balance_checking
         self.balance_savings=balance_savings
+        self.overdraft_count = 0
+        self.is_active = True
 
     def withdraw_checking(self, amount):
+        if not self.is_active:
+            raise ValueError("Account is deactivated due to overdrafts")
+        
         if self.balance_checking is None:
             raise ValueError("No checking account")
+        
+        # overdraft handling
         if amount > self.balance_checking:
-            raise ValueError("Insufficient funds in checking")
+            overdraft_fee = 35
+            new_balance = self.balance_checking - amount - overdraft_fee
+
+            if new_balance < -100:
+                raise ValueError("Overdraft limit exceeded (-100 USD max)")
+
+            self.balance_checking = new_balance
+            self.overdraft_count += 1
+
+            if self.overdraft_count >= 2:
+                self.is_active = False
+
+            return self.balance_checking
+
         self.balance_checking -= amount
         return self.balance_checking
 
