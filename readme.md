@@ -39,3 +39,13 @@ def withdraw_checking(self, amount):
 
     self.balance_checking -= amount
     return self.balance_checking 
+---
+I’m proud of this part because it combines validation, business rules, and customer protection in one function.
+---
+## What I Learned  
+- **Object-Oriented Programming in Python**: classes, methods, and attributes.  
+- **Transaction handling** with error checking and overdraft rules.  
+- Using **CSV files** for data persistence across sessions.  
+- Implementing **user authentication** and login/logout functionality.  
+- **Terminal-based UI design** and handling user input efficiently.  
+- Writing **unit tests** for bank operations to ensure robustness.  
