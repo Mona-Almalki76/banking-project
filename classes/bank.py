@@ -80,13 +80,10 @@ class Bank:
         fieldnames = ["account_id", "frst_name", "last_name",
                     "password", "balance_checking", "balance_savings"]
         
-        write_header = not os.path.exists(filename)
-
         with open(filename, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-            if write_header:
-                writer.writeheader()
+            writer.writeheader()
 
             for customer in self.customers.values():
                 writer.writerow({
@@ -121,6 +118,8 @@ class Bank:
 
             self.save_customers_to_csv()
 
+            self.save_transactions_to_csv()
+
             return transaction
 
         except ValueError as e:
@@ -132,6 +131,7 @@ class Bank:
                 status="FAILED"
             )
             self.transactions.append(transaction)
+            self.save_transactions_to_csv()
             raise e
     
     # deposit money into Account
@@ -157,6 +157,8 @@ class Bank:
 
             self.save_customers_to_csv()
 
+            self.save_transactions_to_csv()
+
             return transaction
 
         except ValueError as e:
@@ -168,6 +170,7 @@ class Bank:
                 status="FAILED"
             )
             self.transactions.append(transaction)
+            self.save_transactions_to_csv()
             raise e
 
     # transfer money between accounts of the same customer
@@ -214,6 +217,7 @@ class Bank:
 
             self.save_customers_to_csv()
 
+            self.save_transactions_to_csv()
             return transaction
 
         except ValueError as e:
@@ -225,6 +229,56 @@ class Bank:
                 status="FAILED"
             )
             self.transactions.append(transaction)
+            self.save_transactions_to_csv()
+
             raise e
+
+    # transactions (csv)
+    def save_transactions_to_csv(self, filename="transactions.csv"):
+        fieldnames = ["account_id", "transaction_type", "amount", "account_type", "status", "timestamp"]
+
+        with open(filename, mode="w", newline="", encoding="utf-8") as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for t in self.transactions:
+                writer.writerow({
+                    "account_id": t.account_id,
+                    "transaction_type": t.transaction_type,
+                    "amount": t.amount,
+                    "account_type": t.account_type,
+                    "status": t.status,
+                    "timestamp": t.timestamp
+                })
+
+    def get_customer_transactions(self, account_id=None, filename="transactions.csv"):
+        account_id = account_id or (self.logged_in_customer.account_id if self.logged_in_customer else None)
+        if not account_id:
+            raise PermissionError("Login required to view transactions")
+        
+        transactions = []
+        try:
+            with open(filename, newline="", encoding="utf-8") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    if row["account_id"] == account_id:
+                        transactions.append(row)
+        except FileNotFoundError:
+            pass
+
+        return transactions
+
+    def show_transaction_details(self, index, account_id=None, filename="transactions.csv"):
+        customer_transactions = self.get_customer_transactions(account_id, filename)
+        if index < 0 or index >= len(customer_transactions):
+            raise IndexError("Transaction index out of range")
+        t = customer_transactions[index]
+        return {
+            "account_id": t["account_id"],
+            "type": t["transaction_type"],
+            "amount": t["amount"],
+            "account_type": t["account_type"],
+            "status": t["status"],
+            "timestamp": t["timestamp"]
+        }
 
 
