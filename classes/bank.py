@@ -82,7 +82,7 @@ class Bank:
         
         write_header = not os.path.exists(filename)
 
-        with open(filename, mode="a", newline="", encoding="utf-8") as file:
+        with open(filename, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.DictWriter(file, fieldnames=fieldnames)
 
             if write_header:
@@ -118,6 +118,9 @@ class Bank:
                 account_type
             )
             self.transactions.append(transaction)
+
+            self.save_customers_to_csv()
+
             return transaction
 
         except ValueError as e:
@@ -151,6 +154,9 @@ class Bank:
                 account_type
             )
             self.transactions.append(transaction)
+
+            self.save_customers_to_csv()
+
             return transaction
 
         except ValueError as e:
@@ -205,6 +211,9 @@ class Bank:
                 status="SUCCESS"
             )
             self.transactions.append(transaction)
+
+            self.save_customers_to_csv()
+
             return transaction
 
         except ValueError as e:
