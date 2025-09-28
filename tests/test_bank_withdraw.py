@@ -38,7 +38,7 @@ class TestWithdraw(unittest.TestCase):
             self.bank.withdraw(700, account_type="checking")
 
     def test_withdraw_savings_overdraft_success(self):
-        transaction = self.bank.withdraw(550, account_type="savings")
+        transaction = self.bank.withdraw(1050, account_type="savings")
         self.assertEqual(self.c1.balance_savings, -85)
         self.assertEqual(transaction.amount, 1050)
         self.assertEqual(transaction.status, "SUCCESS")
@@ -46,6 +46,16 @@ class TestWithdraw(unittest.TestCase):
     def test_withdraw_savings_overdraft_limit_exceeded(self):
         with self.assertRaises(ValueError):
             self.bank.withdraw(2000, account_type="savings")
+
+    def test_account_deactivated_after_two_overdrafts(self):
+        self.bank.withdraw(510, account_type="checking")
+        self.assertTrue(self.c1.is_active) 
+
+        self.bank.withdraw(20, account_type="checking")
+        self.assertFalse(self.c1.is_active)
+
+        self.assertRaises(ValueError, self.bank.withdraw, 50, account_type="checking")
+
 
 if __name__ == "__main__":
     unittest.main()
