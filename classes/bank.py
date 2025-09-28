@@ -45,6 +45,22 @@ class Bank:
         self.customers[account_id] = customer
         return customer
     
+    # load customers
+    def load_customers_from_csv(self, filename="bank.csv"):
+        with open(filename, mode="r", newline="", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                customer = Customer(
+                    row["account_id"],
+                    row["frst_name"],
+                    row["last_name"],
+                    row["password"],
+                    float(row["balance_checking"]) if row["balance_checking"] else None,
+                    float(row["balance_savings"]) if row["balance_savings"] else None
+                )
+                self.customers[customer.account_id] = customer
+
+    
     # login
     def login(self, account_id, password):
         customer = self.customers.get(account_id)
@@ -178,6 +194,8 @@ class Bank:
                 recipient_customer.deposit_savings(amount)
             else:
                 raise ValueError("Invalid recipient account type")
+            
+            recipient_customer.reactivate_account()
 
             transaction = Transaction(
                 sender_customer.account_id,
