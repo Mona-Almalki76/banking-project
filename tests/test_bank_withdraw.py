@@ -56,6 +56,15 @@ class TestWithdraw(unittest.TestCase):
 
         self.assertRaises(ValueError, self.bank.withdraw, 50, account_type="checking")
 
+    def test_savings_account_deactivated_after_two_overdrafts(self):
+        self.bank.withdraw(1010, account_type="savings")
+        self.assertTrue(self.c1.is_active) 
+
+        self.bank.withdraw(20, account_type="savings")
+        self.assertFalse(self.c1.is_active)
+
+        self.assertRaises(ValueError, self.bank.withdraw, 50, account_type="savings")
+
 
 if __name__ == "__main__":
     unittest.main()
