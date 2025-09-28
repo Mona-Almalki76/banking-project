@@ -50,7 +50,7 @@ class Customer:
             if new_balance < -100:
                 raise ValueError("Overdraft limit exceeded (-100 USD max)")
 
-            self.balance_checking = new_balance
+            self.balance_savings = new_balance
             self.overdraft_count += 1
 
             if self.overdraft_count >= 2:
@@ -67,6 +67,7 @@ class Customer:
         if amount <= 0:
             raise ValueError("Deposit amount must be positive")
         self.balance_checking += amount
+        self.reactivate_account()
 
     def deposit_savings(self, amount):
         if self.balance_savings is None:
@@ -74,3 +75,12 @@ class Customer:
         if amount <= 0:
             raise ValueError("Deposit amount must be positive")
         self.balance_savings += amount
+        self.reactivate_account()
+
+    def reactivate_account(self):
+        if self.balance_checking is not None and self.balance_checking >= 0:
+            self.overdraft_count = 0
+            self.is_active = True
+        if self.balance_savings is not None and self.balance_savings >= 0:
+            self.overdraft_count = 0
+            self.is_active = True
